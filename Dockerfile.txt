@@ -1,0 +1,24 @@
+FROM node:20-alpine
+
+# Dependências de compilação
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# CLI global
+RUN npm install -g @medusajs/cli
+
+# Copia os arquivos de dependência primeiro para cache do Docker
+COPY package.json package-lock.json ./
+
+# Instala dependências
+RUN npm install
+
+# Copia o restante do projeto
+COPY . .
+
+# Porta padrão do Medusa
+EXPOSE 9000
+
+# Inicia o Medusa
+CMD ["medusa", "start"]
